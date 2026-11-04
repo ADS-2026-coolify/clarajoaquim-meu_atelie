@@ -30,7 +30,7 @@ docker-compose.yml             teste local de tudo junto
 ## Rodar localmente com Docker
 ```bash
 cp .env.example .env      # edite os valores
-docker compose up --build
+docker compose -f docker-compose.local.yml up --build
 # front: http://localhost:4200   API: http://localhost:8080
 ```
 

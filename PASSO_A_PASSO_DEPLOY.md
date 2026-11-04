@@ -1,93 +1,76 @@
-# Passo a passo: GitHub + GitHub Actions + Coolify
+# Passo a passo: GitHub + GitHub Actions + Coolify (Docker Compose)
 
-## Parte 1 — Subir o projeto no repositório da sala
+O `docker-compose.yml` da raiz sobe **banco + back-end + front-end** em um único recurso do Coolify.
+O Coolify gera sozinho: domínios com HTTPS, usuário e senha do banco. Você só informa o `JWT_SECRET`.
 
-1. Clone o repositório da sala (se ainda não tiver):
-   ```bash
-   git clone https://github.com/ORGANIZACAO/REPOSITORIO-DA-SALA.git
-   cd REPOSITORIO-DA-SALA
-   ```
-2. Copie **o conteúdo** da pasta `meu-atelie-deploy` (backend, frontend, .github, docker-compose.yml, README.md, .gitignore, .env.example, PASSO_A_PASSO_DEPLOY.md) para dentro do repositório clonado.
-   Atenção: a pasta `.github` é oculta; confira que ela foi copiada.
-3. Confirme que nenhum segredo vai junto (não existe `.env` na pasta, e a senha do banco não está mais no código):
-   ```bash
-   git status
-   ```
-4. Envie para o GitHub:
-   ```bash
-   git add .
-   git commit -m "Adiciona back-end e front-end do Meu Atelie"
-   git push origin main
-   ```
-   Se o repositório usar outra branch (por exemplo `master`), troque `main` por ela aqui e em `.github/workflows/deploy.yml`.
+## Parte 1 — Atualizar o repositório
 
-> O primeiro push já dispara o workflow. Os jobs de build vão rodar, e o job de **deploy vai falhar** até você concluir a Parte 3. Isso é esperado.
+Copie para o seu repositório (sobrescrevendo) estes arquivos da pasta `meu-atelie-deploy`:
+`docker-compose.yml`, `docker-compose.local.yml` (novo), `.github/workflows/deploy.yml`, `README.md` e `PASSO_A_PASSO_DEPLOY.md`.
 
-## Parte 2 — Criar os recursos no Coolify
+```bash
+git add .
+git commit -m "Ajusta docker compose para o Coolify"
+git push origin main
+```
 
-### 2.1 Banco de dados
-1. No Coolify: **Projects → (seu projeto) → + New → Database → PostgreSQL**.
-2. Defina nome do banco, usuário e senha e clique em **Start**.
-3. Copie a **conexão interna** (host é o nome do container). Você vai montar a `DB_URL`:
-   `jdbc:postgresql://NOME-DO-CONTAINER:5432/NOME-DO-BANCO`
+## Parte 2 — Criar o recurso no Coolify
 
-### 2.2 Back-end (API)
-1. **+ New → Application →** *Public Repository* (ou *Private Repository* com GitHub App / Deploy Key, se o repositório for privado).
-2. Cole a URL do repositório e escolha a branch `main`.
-3. **Build Pack: Dockerfile**. **Base Directory: `/backend`**. **Port: `8080`**.
-4. Em **Environment Variables**, cadastre:
-   | Nome | Valor |
+Se você já criou um recurso em modo Dockerfile, **apague-o** (Configuration → Danger Zone → Delete) para não sobrar configuração antiga.
+
+1. No projeto/ambiente: **+ New → Application →** escolha o repositório (Public Repository) e a branch `main`.
+2. Em **Build Pack**, escolha **Docker Compose**.
+3. **Base Directory:** `/`   **Docker Compose Location:** `/docker-compose.yml`
+4. Clique em **Continue**.
+5. Se aparecer a janela "Import environment variables" (do `.env.example`), **feche sem importar**.
+6. Abra **Environment Variables**. Devem aparecer as variáveis do compose; preencha:
+   | Variável | Valor |
    |---|---|
-   | `DB_URL` | `jdbc:postgresql://NOME-DO-CONTAINER:5432/NOME-DO-BANCO` |
-   | `DB_USERNAME` | usuário do banco |
-   | `DB_PASSWORD` | senha do banco |
-   | `JWT_SECRET` | texto aleatório com **32+ caracteres** |
-   | `CORS_ALLOWED_ORIGINS` | URL pública do front (ex.: `https://app.seudominio.com`) |
-5. Em **Persistent Storage**, adicione um volume com **Destination Path `/app/uploads`** (guarda as imagens dos produtos).
-6. Em **Domains**, defina o domínio da API (ex.: `https://api.seudominio.com`).
-7. Desmarque **Auto Deploy** (quem vai disparar o deploy é o GitHub Actions).
-8. Clique em **Deploy** uma primeira vez e confira nos logs a mensagem `Started MeuAtelieApplication`.
+   | `JWT_SECRET` | texto aleatório com **32+ caracteres** (veja abaixo como gerar) |
 
-### 2.3 Front-end
-1. **+ New → Application →** mesmo repositório e branch.
-2. **Build Pack: Dockerfile**. **Base Directory: `/frontend`**. **Port: `80`**.
-3. Variável de ambiente (**somente em tempo de execução**, não marque como "Build Variable"):
-   | Nome | Valor |
-   |---|---|
-   | `API_URL` | URL pública da API (ex.: `https://api.seudominio.com`) |
-4. **Domains**: defina o domínio do front (ex.: `https://app.seudominio.com`).
-5. Desmarque **Auto Deploy** e clique em **Deploy**.
+   As variáveis `SERVICE_*` (usuário/senha do banco e URLs) o Coolify gera sozinho. Não precisa preencher.
 
-> Os dois domínios precisam estar corretos um no outro: o front aponta para a API (`API_URL`) e a API libera o front (`CORS_ALLOWED_ORIGINS`). Se aparecer erro de CORS no navegador, é aqui.
+   Para gerar a `JWT_SECRET` no PowerShell:
+   ```powershell
+   [Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])
+   ```
+7. Abra a aba **Configuration** (a principal) e localize os campos de domínio:
+   - **Domains for frontend:** o domínio do front (ex.: `https://meuatelie.SEU-DOMINIO`). Use o gerado pelo Coolify se não tiver um.
+   - **Domains for backend:** o domínio da API (ex.: `https://api.SEU-DOMINIO`).
+   O front usa o domínio do back como `API_URL`, e o back libera o domínio do front no CORS. Isso é automático.
+8. Desmarque **Auto Deploy** (o GitHub Actions vai disparar o deploy).
+9. Clique em **Save** e depois em **Deploy**.
+10. Acompanhe os **Logs** do `backend` até aparecer `Started MeuAtelieApplication`.
+
+> O primeiro deploy demora (build do Maven e do Angular).
+> Se alterar domínio ou variável depois, clique em **Redeploy**.
 
 ## Parte 3 — Ligar o GitHub Actions ao Coolify
 
 1. No Coolify: **Settings → Advanced → habilite "API Access"**.
-2. **Keys & Tokens → API Tokens → Create**, com permissão de **deploy**. Copie o token (ele só aparece uma vez).
-3. Descubra o **UUID** de cada aplicação: abra a aplicação e olhe a URL do navegador (`.../application/<UUID>`).
+2. **Keys & Tokens → API Tokens → Create**, com permissão de **deploy**. Copie o token (aparece uma vez).
+3. Copie o **UUID** do recurso: abra a aplicação e olhe a URL do navegador (`.../application/<UUID>`).
 4. No GitHub: **Repositório → Settings → Secrets and variables → Actions → New repository secret**. Crie:
    | Secret | Valor |
    |---|---|
-   | `COOLIFY_URL` | endereço do seu Coolify, sem barra no final (ex.: `https://coolify.seudominio.com`) |
+   | `COOLIFY_URL` | endereço do seu Coolify, sem barra no final |
    | `COOLIFY_TOKEN` | token criado no passo 2 |
-   | `COOLIFY_BACKEND_UUID` | UUID da aplicação do back-end |
-   | `COOLIFY_FRONTEND_UUID` | UUID da aplicação do front-end |
-5. Em **Actions**, reexecute o workflow (**Re-run all jobs**) ou faça um novo push.
+   | `COOLIFY_APP_UUID` | UUID do recurso (passo 3) |
+5. Em **Actions**, use **Re-run all jobs** (ou faça um novo push).
 
-A partir daí, todo `push` na branch `main` faz: **build do back → build do front → deploy no Coolify**.
+A partir daí, todo `push` na `main` faz: **build do back → build do front → deploy no Coolify**.
 
 ## Como testar
-- Abra o domínio do front, faça o cadastro de um usuário e login.
-- Cadastre um produto com imagem e confira que ela aparece (valida o volume `/app/uploads`).
+- Abra o domínio do front, cadastre um usuário e faça login.
+- Cadastre um produto com imagem e confira que ela aparece (valida o volume de uploads).
 
 ## Problemas comuns
 | Sintoma | Causa provável |
 |---|---|
-| Erro de CORS no navegador | `CORS_ALLOWED_ORIGINS` diferente do domínio real do front |
-| Front chama `localhost:8080` | `API_URL` não definida (ou marcada como Build Variable) |
-| API não sobe: `password authentication failed` | `DB_USERNAME`/`DB_PASSWORD`/`DB_URL` incorretos |
-| Job de deploy falha com 401/403 | token sem permissão de deploy, ou "API Access" desativado |
-| Job de deploy falha com 404 | UUID errado em `COOLIFY_BACKEND_UUID`/`COOLIFY_FRONTEND_UUID` |
-| Imagens somem após novo deploy | faltou o volume persistente em `/app/uploads` |
-| Usuários são deslogados após trocar a chave | `JWT_SECRET` foi alterada (os tokens antigos deixam de valer) |
-| Segurança fraca do token | se `JWT_SECRET` faltar ou tiver menos de 32 caracteres, o sistema usa uma chave padrão do código. Sempre defina a variável. |
+| Erro de CORS no navegador | domínio do front mudou depois do deploy: faça **Redeploy** |
+| Front chama `localhost:8080` | domínio do back não definido na aba Configuration; defina e faça **Redeploy** |
+| Back não sobe: `password authentication failed` | volume do banco antigo com outra senha: apague o volume `db_data` (Storages) e faça Redeploy |
+| `JWT_SECRET` vazia | variável não preenchida no passo 2.6 |
+| Deploy do Actions falha 401/403 | token sem permissão de deploy ou "API Access" desativado |
+| Deploy do Actions falha 404 | `COOLIFY_APP_UUID` errado |
+| Imagens somem após novo deploy | o volume `uploads_data` precisa existir (já está no compose); não apague em Storages |
