@@ -1,0 +1,203 @@
+/* ============================================
+   CLIENTES - Estilos especificos
+   Cards de clientes com avatar, info e stats
+   ============================================ */
+
+.clients-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.client-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+.client-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.client-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.client-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: var(--primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.client-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.client-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-input);
+  margin-bottom: var(--space-sm);
+}
+
+.client-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  color: var(--secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.client-stats {
+  display: flex;
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.client-stat {
+  font-size: 0.85rem;
+  color: var(--secondary);
+}
+
+.client-stat strong {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.btn-pagination {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.btn-pagination:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-action {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+.btn-action:hover {
+  background-color: var(--accent);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-action.btn-action--danger:hover {
+  background-color: #fde8e5;
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  color: #5c3a21;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  border-color: #5c3a21;
+}
+
+.filter-chip.active {
+  background-color: #5c3a21;
+  color: #ffffff;
+  border-color: #5c3a21;
+}
+
+.chip-badge {
+  background-color: #fcecdb;
+  color: #5c3a21;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.filter-chip.active .chip-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+@media (min-width: 768px) {
+  .client-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .client-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

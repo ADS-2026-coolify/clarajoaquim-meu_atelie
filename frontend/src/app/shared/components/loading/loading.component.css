@@ -1,0 +1,47 @@
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(59, 30, 10, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.loading-dialog {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-xl) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  animation: loading-rotate 1s linear infinite;
+}
+
+.loading-spinner-track {
+  stroke: var(--accent);
+}
+
+.loading-spinner-arc {
+  stroke: var(--primary);
+  stroke-linecap: round;
+  stroke-dasharray: 90, 150;
+}
+
+.loading-text {
+  font-weight: 600;
+  color: var(--text-label);
+}
+
+@keyframes loading-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}

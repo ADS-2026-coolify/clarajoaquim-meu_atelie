@@ -1,0 +1,30 @@
+<div class="modal fade" #meuModal tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <div class="modal-header"
+           [ngClass]="{'bg-success text-white': tipo === 'sucesso', 'bg-danger text-white': tipo === 'erro', 'bg-warning text-dark': tipo === 'confirmacao'}">
+        <h5 class="modal-title">{{ titulo }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center p-4">
+        <p class="fs-5">{{ mensagem }}</p>
+      </div>
+
+      <div class="modal-footer justify-content-center">
+        @if (tipo === 'confirmacao') {
+          <button type="button" class="btn btn-secondary" (click)="fecharModal()">
+            {{ textoBotaoCancelar }}
+          </button>
+        }
+        <button type="button" class="btn"
+                [ngClass]="{'btn-success': tipo === 'sucesso', 'btn-danger': tipo === 'erro', 'btn-warning': tipo === 'confirmacao'}"
+                (click)="confirmar()">
+          {{ textoBotao }}
+        </button>
+      </div>
+      
+    </div>
+  </div>
+</div>

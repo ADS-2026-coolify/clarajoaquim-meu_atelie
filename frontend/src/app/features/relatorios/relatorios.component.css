@@ -1,0 +1,231 @@
+.custom-period-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-top: var(--space-md);
+}
+
+.custom-period-bar .btn-nova-encomenda {
+  align-self: flex-end;
+}
+
+.custom-period-bar .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: 0;
+}
+
+.custom-period-bar .form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-label);
+}
+
+.custom-period-bar .form-input {
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-bg);
+  font-size: 1rem;
+  color: var(--text-input);
+  font-family: inherit;
+}
+
+.custom-period-bar .form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(116, 60, 20, 0.1);
+}
+
+.custom-period-erro {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: 100%;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-md);
+}
+
+.metric-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: box-shadow var(--transition), transform var(--transition);
+  min-height: 112px;
+}
+
+.card-icon-wrapper {
+  flex-shrink: 0;
+}
+
+.metric-card .card-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.metric-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.metric-trend {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-xs);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.metric-trend--up {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.metric-trend--down {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+
+/* ============================================
+   GRÁFICO DE COLUNAS (CSS puro)
+   ============================================ */
+.chart-section {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  height: 280px;
+  padding-top: var(--space-md);
+  overflow-x: auto;
+}
+
+.bar-chart-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 48px;
+  height: 100%;
+}
+
+.bar-value {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-input);
+  white-space: nowrap;
+}
+
+.bar-value--projected {
+  color: var(--text-placeholder);
+}
+
+.bar-track {
+  flex: 1;
+  width: 100%;
+  max-width: 48px;
+  display: flex;
+  align-items: flex-end;
+  background-color: var(--accent);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.bar-fill {
+  width: 100%;
+  background-color: var(--secondary);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: height 0.6s ease;
+}
+
+.bar-fill--current {
+  background-color: var(--primary);
+}
+
+.bar-fill--projected {
+  background-color: var(--text-placeholder);
+}
+
+.bar-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--secondary);
+  flex-shrink: 0;
+}
+
+.bar-chart-col--projected {
+  opacity: 0.7;
+}
+
+.chart-note {
+  font-size: 0.8rem;
+  color: var(--text-placeholder);
+  margin-top: var(--space-md);
+  font-style: italic;
+}
+
+
+/* ============================================
+   BARRA DE PROGRESSO
+   ============================================ */
+.progress-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 120px;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 999px;
+  flex: 1;
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--secondary);
+  white-space: nowrap;
+}
+
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+@media (min-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .metrics-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

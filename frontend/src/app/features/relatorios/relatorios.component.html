@@ -1,0 +1,209 @@
+<app-header></app-header>
+
+  <main class="main">
+    <div class="container">
+
+      <section class="page-header">
+        <div class="page-header-text">
+          <h2 class="page-title">Relatórios</h2>
+          <p class="page-subtitle">Acompanhe o desempenho do seu ateliê de bordado.</p>
+        </div>
+        <button type="button" class="btn-nova-encomenda" (click)="gerarPdf()" [disabled]="gerandoPdf">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          {{ gerandoPdf ? 'Gerando...' : 'Gerar PDF' }}
+        </button>
+      </section>
+
+      <section class="period-filter" aria-label="Selecionar período">
+        <div class="filter-tabs">
+          <a *ngFor="let p of periodos" href="#"
+             class="filter-tab" [class.filter-tab--active]="p.valor === periodoSelecionado"
+             (click)="$event.preventDefault(); selecionarPeriodo(p.valor)">{{ p.label }}</a>
+        </div>
+
+        <div class="custom-period-bar" *ngIf="periodoSelecionado === 'PERSONALIZADO'">
+          <div class="form-group">
+            <label class="form-label" for="data-inicio-custom">Data Início</label>
+            <input type="date" id="data-inicio-custom" class="form-input" [(ngModel)]="dataInicioCustom" [max]="dataMaxima">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="data-fim-custom">Data Fim</label>
+            <input type="date" id="data-fim-custom" class="form-input" [(ngModel)]="dataFimCustom" [max]="dataMaxima">
+          </div>
+          <button type="button" class="btn-nova-encomenda"
+            [disabled]="!dataInicioCustom || !dataFimCustom || dataFimCustom < dataInicioCustom"
+            (click)="aplicarPeriodoPersonalizado()">
+            Aplicar
+          </button>
+          <div *ngIf="dataInicioCustom && dataFimCustom && dataFimCustom < dataInicioCustom" class="custom-period-erro">
+            A data final não pode ser anterior à data inicial.
+          </div>
+        </div>
+      </section>
+
+      <section class="summary-section" aria-label="Métricas do período">
+        <div class="metrics-grid" *ngIf="indicadores; else carregandoIndicadoresTpl">
+          <article class="metric-card">
+            <div class="card-icon-wrapper card-icon--progress">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ indicadores.faturamento | currency:'BRL':'symbol':'1.0-0' }}</span>
+              <span class="card-label">Faturamento {{ rotuloPeriodo() }}</span>
+              <div class="metric-trend" [ngClass]="trendClass(indicadores.faturamentoVariacaoPercentual)"
+                   *ngIf="indicadores.faturamentoVariacaoPercentual !== null">
+                <svg *ngIf="indicadores.faturamentoVariacaoPercentual >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg *ngIf="indicadores.faturamentoVariacaoPercentual < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                {{ indicadores.faturamentoVariacaoPercentual >= 0 ? '+' : '' }}{{ indicadores.faturamentoVariacaoPercentual | number:'1.0-0' }}%
+              </div>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="card-icon-wrapper card-icon--done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ indicadores.totalPedidos }}</span>
+              <span class="card-label">Pedidos {{ rotuloPeriodo() }}</span>
+              <div class="metric-trend" [ngClass]="trendClass(indicadores.totalPedidosVariacaoPercentual)"
+                   *ngIf="indicadores.totalPedidosVariacaoPercentual !== null">
+                <svg *ngIf="indicadores.totalPedidosVariacaoPercentual >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg *ngIf="indicadores.totalPedidosVariacaoPercentual < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                {{ indicadores.totalPedidosVariacaoPercentual >= 0 ? '+' : '' }}{{ indicadores.totalPedidosVariacaoPercentual | number:'1.0-0' }}%
+              </div>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="card-icon-wrapper card-icon--progress">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ indicadores.novosClientes }}</span>
+              <span class="card-label">Novos clientes</span>
+              <div class="metric-trend" [ngClass]="trendClass(indicadores.novosClientesVariacaoPercentual)"
+                   *ngIf="indicadores.novosClientesVariacaoPercentual !== null">
+                <svg *ngIf="indicadores.novosClientesVariacaoPercentual >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg *ngIf="indicadores.novosClientesVariacaoPercentual < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                {{ indicadores.novosClientesVariacaoPercentual >= 0 ? '+' : '' }}{{ indicadores.novosClientesVariacaoPercentual | number:'1.0-0' }}%
+              </div>
+            </div>
+          </article>
+          <article class="metric-card">
+            <div class="card-icon-wrapper card-icon--late">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ indicadores.ticketMedio | currency:'BRL':'symbol':'1.0-0' }}</span>
+              <span class="card-label">Ticket médio</span>
+              <div class="metric-trend" [ngClass]="trendClass(indicadores.ticketMedioVariacaoPercentual)"
+                   *ngIf="indicadores.ticketMedioVariacaoPercentual !== null">
+                <svg *ngIf="indicadores.ticketMedioVariacaoPercentual >= 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg *ngIf="indicadores.ticketMedioVariacaoPercentual < 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                {{ indicadores.ticketMedioVariacaoPercentual >= 0 ? '+' : '' }}{{ indicadores.ticketMedioVariacaoPercentual | number:'1.0-0' }}%
+              </div>
+            </div>
+          </article>
+        </div>
+        <ng-template #carregandoIndicadoresTpl>
+          <p class="chart-note" *ngIf="carregandoIndicadores">Carregando indicadores...</p>
+          <p class="chart-note" *ngIf="!carregandoIndicadores">Não foi possível carregar os indicadores.</p>
+        </ng-template>
+      </section>
+
+      <section class="chart-section" aria-label="Gráfico de faturamento mensal" *ngIf="mostrarGraficoFaturamento">
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Faturamento Mensal ({{ anoAtual }})
+        </h3>
+        <div class="bar-chart" *ngIf="mesesGrafico.length; else semFaturamentoMensal">
+          <div class="bar-chart-col" *ngFor="let mes of mesesGrafico" [class.bar-chart-col--projected]="mes.isProjetado">
+            <span class="bar-value" [class.bar-value--projected]="mes.isProjetado">
+              {{ mes.valor | currency:'BRL':'symbol':'1.0-0' }}{{ mes.isProjetado ? '*' : '' }}
+            </span>
+            <div class="bar-track">
+              <div class="bar-fill" [class.bar-fill--current]="mes.isMesAtual" [class.bar-fill--projected]="mes.isProjetado"
+                   [style.height.%]="mes.alturaPercentual"></div>
+            </div>
+            <span class="bar-label">{{ mes.label }}</span>
+          </div>
+        </div>
+        <ng-template #semFaturamentoMensal>
+          <p class="chart-note">Sem dados de faturamento para exibir.</p>
+        </ng-template>
+        <p class="chart-note">* Valor estimado com base nos pedidos em andamento.</p>
+      </section>
+
+      <section class="orders-section" aria-label="Tipos mais vendidos">
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Tipos de Bordado Mais Pedidos
+        </h3>
+        <div class="orders-table-wrapper">
+          <table class="orders-table" *ngIf="rankingProdutos.length; else semRankingProdutos">
+            <thead>
+              <tr>
+                <th>Posição</th>
+                <th>Tipo de Bordado</th>
+                <th>Quantidade</th>
+                <th>Receita</th>
+                <th>% do Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of rankingProdutos">
+                <td data-label="Posição">{{ item.posicao }}</td>
+                <td data-label="Tipo">{{ item.nomeProduto }}</td>
+                <td data-label="Quantidade">{{ item.quantidadeVendida }}</td>
+                <td data-label="Receita">{{ item.receita | currency:'BRL':'symbol':'1.0-0' }}</td>
+                <td data-label="% Total">
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-bar" [style.width.%]="item.percentualReceita"></div>
+                    <span class="progress-text">{{ item.percentualReceita | number:'1.0-0' }}%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #semRankingProdutos>
+            <p class="chart-note" *ngIf="carregandoRankingProdutos">Carregando...</p>
+            <p class="chart-note" *ngIf="!carregandoRankingProdutos">Nenhum produto vendido neste período.</p>
+          </ng-template>
+        </div>
+      </section>
+
+      <section class="orders-section" aria-label="Melhores clientes">
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Melhores Clientes do Período
+        </h3>
+        <div class="orders-table-wrapper">
+          <table class="orders-table" *ngIf="rankingClientes.length; else semRankingClientes">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Pedidos</th>
+                <th>Valor Total</th>
+                <th>Último Pedido</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cliente of rankingClientes">
+                <td data-label="Cliente">{{ cliente.nomeCliente }}</td>
+                <td data-label="Pedidos">{{ cliente.totalPedidos }}</td>
+                <td data-label="Valor Total">{{ cliente.valorTotal | currency:'BRL':'symbol':'1.0-0' }}</td>
+                <td data-label="Último Pedido">{{ cliente.dataUltimoPedido | date:'dd/MM/yyyy' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #semRankingClientes>
+            <p class="chart-note" *ngIf="carregandoRankingClientes">Carregando...</p>
+            <p class="chart-note" *ngIf="!carregandoRankingClientes">Nenhum cliente com pedidos neste período.</p>
+          </ng-template>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <app-modal></app-modal>
+  <app-footer></app-footer>

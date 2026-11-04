@@ -1,0 +1,167 @@
+<app-header></app-header>
+
+<!-- CONTEUDO PRINCIPAL -->
+<main class="main">
+  <div class="container">
+
+    <!-- Titulo da pagina e acoes -->
+    <section class="page-header">
+      <div class="page-header-text">
+        <h2 class="page-title">Pedidos</h2>
+        <p class="page-subtitle">Gerencie todas as suas encomendas de bordado.</p>
+      </div>
+      <a routerLink="/pedidos/cadastro" class="btn-nova-encomenda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round" width="22" height="22">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Nova Encomenda
+      </a>
+    </section>
+
+    <section class="search-section" aria-label="Buscar pedidos">
+      <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <div class="search-bar" style="flex: 1; min-width: 250px;">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" class="search-input" [(ngModel)]="searchTerm"
+            placeholder="Buscar cliente, itens ou pedido #...">
+        </div>
+      </div>
+    </section>
+
+    <section class="filters-section" aria-label="Filtros de pedidos">
+      <div class="filter-tabs">
+        <a class="filter-tab" [class.filter-tab--active]="statusFiltro === 'TODOS'"
+          (click)="setStatus('TODOS', $event)">
+          Todos <span class="filter-count">{{ totalPedidos }}</span>
+        </a>
+        <a class="filter-tab" [class.filter-tab--active]="statusFiltro === 'EM_ANDAMENTO'"
+          (click)="setStatus('EM_ANDAMENTO', $event)">
+          Em andamento <span class="filter-count filter-count--progress">{{ totalEmAndamento }}</span>
+        </a>
+        <a class="filter-tab" [class.filter-tab--active]="statusFiltro === 'FINALIZADO'"
+          (click)="setStatus('FINALIZADO', $event)">
+          Finalizados <span class="filter-count filter-count--done">{{ totalFinalizados }}</span>
+        </a>
+        <a class="filter-tab" [class.filter-tab--active]="statusFiltro === 'ORCAMENTO'"
+          (click)="setStatus('ORCAMENTO', $event)">
+          Orçamentos <span class="filter-count filter-count--orcamento">{{ totalOrcamento }}</span>
+        </a>
+        <a class="filter-tab" [class.filter-tab--active]="statusFiltro === 'CANCELADO'"
+          (click)="setStatus('CANCELADO', $event)">
+          Cancelados <span class="filter-count" style="background: #fee2e2; color: #ef4444;">{{ totalCancelados
+            }}</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="orders-section" aria-label="Lista de pedidos">
+      <div class="orders-table-wrapper">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>Cliente</th>
+              <th>Data do Pedido</th>
+              <th>Prazo</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (pedido of pedidosPaginados; track pedido.id) {
+            <tr>
+              <td data-label="Pedido">#{{ pedido.idVisual | number:'3.0-0' }}</td>
+              <td data-label="Cliente">{{ pedido.nomeCliente }}</td>
+              <td data-label="Data">{{ pedido.dataPedido | date:'dd/MM/yyyy' }}</td>
+              <td data-label="Prazo">{{ (pedido.dataEntrega | date:'dd/MM/yyyy') || 'A definir' }}</td>
+              <td data-label="Valor">{{ pedido.valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+              <td data-label="Status">
+                <span class="status-badge" [ngClass]="getStatusClass(obterStatusAjustado(pedido.status))">
+                  {{ pedido.status?.descricao }}
+                </span>
+              </td>
+              <td data-label="Ações">
+                <div class="actions-cell">
+                  <a [routerLink]="['/pedidos/editar', pedido.id]" class="btn-action" title="Editar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" width="16" height="16">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </a>
+                  <a *ngIf="obterStatusAjustado(pedido.status) === 'FINALIZADO'" href="#" class="btn-action"
+                    title="Gerar Recibo" (click)="$event.preventDefault(); gerarRecibo(pedido.id!)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" width="16" height="16">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                      <line x1="16" y1="13" x2="8" y2="13"/>
+                      <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                  </a>
+                  <button type="button" class="btn-action btn-action--danger" title="Excluir Permanentemente"
+                    (click)="excluir(pedido)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" width="16" height="16">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 20px;">Nenhuma encomenda encontrada para os filtros
+                aplicados.</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Paginacao -->
+    @if (totalPaginas > 1) {
+    <nav class="pagination" aria-label="Paginacao dos pedidos">
+      <a href="#" class="pagination-btn" [class.pagination-btn--disabled]="paginaAtual === 1"
+        (click)="paginaAnterior($event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" width="18" height="18">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        Anterior
+      </a>
+
+      <div class="pagination-pages">
+        @for (pagina of paginas; track pagina) {
+        <a href="#" class="pagination-page" [class.pagination-page--active]="pagina === paginaAtual"
+          (click)="mudarPagina(pagina, $event)">
+          {{ pagina }}
+        </a>
+        }
+      </div>
+
+      <a href="#" class="pagination-btn" [class.pagination-btn--disabled]="paginaAtual === totalPaginas"
+        (click)="proximaPagina($event)">
+        Próximo
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" width="18" height="18">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </a>
+    </nav>
+    }
+
+  </div>
+</main>
+
+<app-modal></app-modal>
+<app-footer></app-footer>

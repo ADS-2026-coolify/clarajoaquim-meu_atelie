@@ -1,0 +1,279 @@
+/* ============================================
+   NOVA ENCOMENDA - Estilos especificos
+   Formulario, back-link, botao secundario
+   ============================================ */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--secondary);
+  margin-bottom: var(--space-sm);
+  transition: color var(--transition);
+}
+
+.back-link:hover {
+  color: var(--primary);
+}
+
+
+/* ============================================
+   FORMULARIO
+   ============================================ */
+.form-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.form-section {
+  border: none;
+  padding: 0;
+}
+
+.form-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--border);
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-label);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--input-bg);
+  font-size: 1rem;
+  color: var(--text-input);
+  font-family: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  min-height: 48px;
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238f5024' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-md) center;
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-placeholder);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(116, 60, 20, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 2px solid var(--border);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-xl);
+  background-color: transparent;
+  color: var(--secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: 56px;
+  text-align: center;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--accent);
+}
+
+.input-with-action {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.input-with-action .form-select {
+  flex: 2; /* Diminui a proporção do select (ex: ocupa 2 partes) */
+}
+
+.btn-add {
+  flex: 1; /* Aumenta o botão (ex: ocupa 1 parte) */
+  /* Mantenha as outras propriedades do .btn-add aqui... */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-md);
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-add:hover {
+  border-color: var(--primary);
+  background-color: var(--accent);
+}
+
+.dialog-modal {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: transparent;
+  margin: auto;
+  max-width: 450px;
+  width: 100%;
+}
+
+.dialog-modal::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.dialog-content {
+  background-color: var(--surface);
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .form-card {
+    padding: var(--space-2xl);
+  }
+}
+
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-action {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  color: var(--secondary);
+}
+
+.btn-action:hover {
+  background-color: var(--accent);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-action.btn-action--danger:hover {
+  background-color: #fde8e5;
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.dialog-modal {
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+}
+
+.dialog-modal::backdrop {
+  background: rgba(116, 60, 20, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.dialog-content {
+  padding: var(--space-xl);
+  background: var(--surface);
+}
+
+.btn-add {
+  background-color: var(--accent);
+  color: var(--primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0 15px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}

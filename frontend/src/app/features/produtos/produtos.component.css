@@ -1,0 +1,54 @@
+.product-cell {
+  display: flex;           /* Ativa o Flexbox */
+  align-items: center;    /* Alinha a imagem e o texto verticalmente ao centro */
+  gap: 12px;              /* Cria um espaçamento entre a imagem e o texto */
+}
+
+.product-thumb {
+  width: 40px;            /* Defina o tamanho fixo da imagem */
+  height: 40px;
+  flex-shrink: 0;         /* Garante que a imagem não "esprema" o texto */
+}
+
+/* Garante que o texto fique empilhado (Nome e Código) */
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container que centraliza os botões na célula */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Reset básico e estilização dos botões */
+.btn-action {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  color: var(--secondary);
+}
+
+/* Efeito Hover padrão */
+.btn-action:hover {
+  background-color: var(--accent);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Estilo específico para o botão de deletar (perigo) */
+.btn-action.btn-action--danger:hover {
+  background-color: #fde8e5;
+  border-color: #c0392b;
+  color: #c0392b;
+}
+

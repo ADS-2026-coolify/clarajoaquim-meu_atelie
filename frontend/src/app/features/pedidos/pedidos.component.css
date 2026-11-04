@@ -1,0 +1,51 @@
+.btn-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  background-color: #855600; /* Azul - ajuste conforme a paleta do seu projeto */
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-editar:hover {
+  background-color: #704901; /* Azul mais escuro no hover */
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-action {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  color: var(--secondary);
+}
+
+.btn-action:hover {
+  background-color: var(--accent);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-action.btn-action--danger:hover {
+  background-color: #fde8e5;
+  border-color: #c0392b;
+  color: #c0392b;
+}

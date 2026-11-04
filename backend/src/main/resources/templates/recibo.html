@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Recibo</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm 20mm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #1f3a3d;
+            font-size: 12px;
+        }
+        .recibo {
+            border: 2px solid #7fd0d9;
+            border-radius: 8px;
+            padding: 0;
+        }
+        .topo {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .topo td {
+            vertical-align: middle;
+            padding: 10px 14px;
+        }
+        .caixa-numero, .caixa-valor {
+            border: 1px solid #7fd0d9;
+            border-radius: 6px;
+            padding: 6px 10px;
+            width: 110px;
+        }
+        .caixa-rotulo {
+            font-size: 10px;
+            color: #4c9aa3;
+        }
+        .caixa-conteudo {
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .titulo {
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            color: #2fa7b4;
+            letter-spacing: 2px;
+        }
+        .corpo {
+            border-top: 1px solid #7fd0d9;
+            padding: 14px 18px;
+        }
+        .campo {
+            border-bottom: 1px solid #bfe6ea;
+            padding: 7px 0;
+            font-size: 12px;
+        }
+        .campo .rotulo {
+            color: #2fa7b4;
+        }
+        .campo .valor {
+            color: #1f3a3d;
+        }
+        .clareza {
+            padding: 10px 18px;
+            font-size: 12px;
+            color: #2fa7b4;
+        }
+        .data-linha {
+            border-top: 1px solid #7fd0d9;
+            padding: 10px 18px;
+            font-size: 12px;
+            color: #1f3a3d;
+        }
+        .rodape {
+            border-top: 1px solid #7fd0d9;
+            padding: 12px 18px 16px 18px;
+        }
+        .rodape .campo {
+            border-bottom: 1px solid #bfe6ea;
+        }
+        .rodape .campo:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="recibo">
+    <table class="topo">
+        <tr>
+            <td style="width: 130px;">
+                <div class="caixa-numero">
+                    <div class="caixa-rotulo">Nº</div>
+                    <div class="caixa-conteudo" th:text="${numero}">000</div>
+                </div>
+            </td>
+            <td class="titulo">RECIBO</td>
+            <td style="width: 150px;">
+                <div class="caixa-valor">
+                    <div class="caixa-rotulo">Valor</div>
+                    <div class="caixa-conteudo" th:text="${valorFormatado}">R$ 0,00</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="corpo">
+        <div class="campo">
+            <span class="rotulo">Recebi(emos) de </span>
+            <span class="valor" th:text="${nomeCliente}">Nome do cliente</span>
+        </div>
+        <div class="campo">
+            <span class="rotulo">Endereço </span>
+            <span class="valor" th:text="${enderecoCliente}">Endereço do cliente</span>
+        </div>
+        <div class="campo">
+            <span class="rotulo">A importância de </span>
+            <span class="valor" th:text="${valorExtenso}">valor por extenso</span>
+        </div>
+        <div class="campo">
+            <span class="rotulo">Referente </span>
+            <span class="valor" th:text="${referente}">Descrição dos produtos</span>
+        </div>
+    </div>
+
+    <div class="clareza">
+        Para maior clareza firmo o presente.
+    </div>
+
+    <div class="data-linha">
+        <span th:text="${cidadeEmissao}">Cidade</span>,
+        <span th:text="${diaEmissao}">00</span> de
+        <span th:text="${mesEmissao}">mês</span> de
+        <span th:text="${anoEmissao}">0000</span>.
+    </div>
+
+    <div class="rodape">
+        <div class="campo">
+            <span class="rotulo">Emitente </span>
+            <span class="valor" th:text="${emitenteNome}">Nome do emitente</span>
+            <span class="rotulo" style="margin-left: 24px;">CPF/RG </span>
+            <span class="valor" th:text="${emitenteCpf}">CPF</span>
+        </div>
+        <div class="campo">
+            <span class="rotulo">Endereço </span>
+            <span class="valor" th:text="${enderecoEmitente}">Endereço do emitente</span>
+        </div>
+        <div class="campo">
+            <span class="rotulo">Assinatura </span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

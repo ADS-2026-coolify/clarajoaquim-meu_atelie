@@ -1,0 +1,187 @@
+<app-header></app-header>
+
+<main class="main">
+  <div class="container">
+
+    <section class="page-header">
+      <div class="page-header-text">
+        <a routerLink="/pedidos" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Voltar para Pedidos
+        </a>
+        <h2 class="page-title">{{ isEdicao ? 'Editar Encomenda' : 'Nova Encomenda' }}</h2>
+        <p class="page-subtitle">
+          {{ isEdicao ? 'Atualize os dados da encomenda abaixo.' : 'Preencha os dados abaixo para registrar uma nova
+          encomenda.' }}
+        </p>
+      </div>
+    </section>
+
+    <form class="form-card" (ngSubmit)="salvar()" #encomendaForm="ngForm">
+
+      <fieldset class="form-section">
+        <legend class="form-legend">Dados do Cliente</legend>
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label for="cliente" class="form-label">Cliente *</label>
+            <select id="cliente" name="cliente" class="form-select" [(ngModel)]="clienteSelecionado" required>
+              <option [ngValue]="null" disabled selected>Selecione um cliente</option>
+              <option *ngFor="let c of clientes" [value]="c.id">{{ c.nome }}</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="form-legend">Produtos</legend>
+        <div class="produtos-grid">
+
+          <div *ngFor="let p of produtos" class="produto-card" [class.produto-card--selecionado]="p.quantidadeSelecionada > 0">
+            <img [src]="p.imagem ? apiUrl + '/uploads/' + p.imagem : 'assets/placeholder.jpg'" alt="Produto"
+              class="produto-imagem">
+            <h4 class="produto-nome">{{ p.nome }}</h4>
+            <p class="produto-descricao">{{ p.descricao }}</p>
+            <p class="produto-preco">R$ {{ p.preco }}</p>
+
+            <div class="quantidade-stepper">
+              <button type="button" class="btn-qtd" (click)="alterarQuantidade(p, -1)" [disabled]="p.quantidadeSelecionada === 0" aria-label="Diminuir quantidade">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </button>
+              <span class="qtd-valor">{{ p.quantidadeSelecionada }}</span>
+              <button type="button" class="btn-qtd" (click)="alterarQuantidade(p, 1)" aria-label="Aumentar quantidade">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="form-legend">Prazos e Valor</legend>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="data-pedido" class="form-label">Data do Pedido *</label>
+            <input type="date" id="data-pedido" name="data-pedido" class="form-input" [(ngModel)]="dataPedido"
+              [max]="dataMaxima" required>
+          </div>
+
+          <div class="form-group">
+            <label for="prazo-entrega" class="form-label">Prazo de Entrega *</label>
+            <input type="date" id="prazo-entrega" name="prazo-entrega" class="form-input" [(ngModel)]="prazoEntrega"
+              [min]="dataPedido">
+
+            <div *ngIf="prazoEntrega && dataPedido && prazoEntrega < dataPedido"
+              style="color: #d32f2f; font-size: 0.85rem; margin-top: 5px; font-weight: bold;">
+              Erro: A data de entrega não pode ser menor que a data do pedido.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="subtotal" class="form-label">Subtotal</label>
+            <input type="text" id="subtotal" class="form-input" [value]="subtotal | currency:'BRL'" readonly
+              style="background-color: #f9f9f9; pointer-events: none; cursor: default;">
+          </div>
+
+          <div class="form-group">
+            <label for="data-pagamento" class="form-label">Data do Pagamento</label>
+            <input type="date" id="data-pagamento" name="data-pagamento" class="form-input"
+              [(ngModel)]="dataPagamento" [max]="dataMaxima">
+
+            <div *ngIf="statusSelecionado === 'FINALIZADO' && !dataPagamento"
+              style="color: #d32f2f; font-size: 0.85rem; margin-top: 5px; font-weight: bold;">
+              Obrigatória para marcar o pedido como Finalizado.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="forma-pagamento" class="form-label">Forma de Pagamento</label>
+            <select id="forma-pagamento" name="forma-pagamento" class="form-select" [(ngModel)]="formaPagamento">
+              <option value="" disabled selected>Selecione</option>
+              <option value="DINHEIRO">Dinheiro</option>
+              <option value="PIX">PIX</option>
+              <option value="CARTAO_CREDITO">Cartão de crédito</option>
+              <option value="CARTAO_DEBITO">Cartão de débito</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" name="status" class="form-select" [(ngModel)]="statusSelecionado" required>
+              <option *ngFor="let s of statusList" [value]="s.nome">{{ s.descricao }}</option>
+            </select>
+          </div>
+
+          <div class="form-group form-group--full">
+            <label class="form-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+              <input type="checkbox" name="aplicarDesconto" [(ngModel)]="aplicarDesconto"
+                (ngModelChange)="alternarAplicarDesconto()" style="width: 18px; height: 18px; cursor: pointer;">
+              Deseja aplicar desconto a este pedido?
+            </label>
+          </div>
+
+          @if (aplicarDesconto) {
+          <div class="form-group">
+            <label for="tipoDesconto" class="form-label">Tipo de Desconto</label>
+            <select id="tipoDesconto" name="tipoDesconto" class="form-select" [(ngModel)]="tipoDesconto"
+              (ngModelChange)="mudouTipoDesconto()">
+              <option value="VALOR">Valor (R$)</option>
+              <option value="PORCENTAGEM">Porcentagem (%)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="desconto" class="form-label">
+              Desconto {{ tipoDesconto === 'PORCENTAGEM' ? '(%)' : '(R$)' }}
+            </label>
+
+            <div class="desconto-container">
+              <input type="text" class="form-input" [value]="descontoExibicao" (input)="aplicarMascara($event)">
+
+              <span class="desconto-real" *ngIf="tipoDesconto === 'PORCENTAGEM'">
+                = {{ valorDesconto | currency:'BRL' }}
+              </span>
+            </div>
+          </div>
+          }
+
+          <div class="form-group form-group--full">
+            <label for="valor" class="form-label">Valor Total *</label>
+            <input type="text" id="valor" class="form-input" [value]="valorTotal | currency:'BRL'" readonly
+              style="background-color: #e6f7ff; font-weight: bold; pointer-events: none; cursor: default;">
+          </div>
+
+        </div>
+      </fieldset>
+
+      <div *ngIf="!encomendaForm.valid || subtotal === 0 || (prazoEntrega && dataPedido && prazoEntrega < dataPedido) || (statusSelecionado === 'FINALIZADO' && !dataPagamento)"
+        style="color: #d32f2f; background-color: #fde0e0; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;">
+        <strong>Atenção:</strong> Preencha os campos obrigatórios, adicione produtos e verifique se as datas estão
+        corretas.
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/pedidos" class="btn-secondary">Cancelar</a>
+        <button type="submit" class="btn-nova-encomenda"
+          [disabled]="!encomendaForm.valid || subtotal === 0 || (prazoEntrega && dataPedido && prazoEntrega < dataPedido) || (statusSelecionado === 'FINALIZADO' && !dataPagamento)">
+          {{ isEdicao ? 'Atualizar Encomenda' : 'Salvar Encomenda' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</main>
+
+<app-modal></app-modal>
+<app-footer></app-footer>

@@ -1,0 +1,135 @@
+.logo-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-section h1 {
+  margin-bottom: 12px;
+}
+
+.logo-section .subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--secondary); 
+  margin-bottom: 16px;
+}
+
+.subtitle-section {
+  font-size: 20px;
+  border-bottom: 2px solid var(--secondary);
+  font-weight: bold;
+  color: var(--secondary); 
+  margin: 16px 0 24px 0;
+}
+
+.logo-section .divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--secondary));
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.form-group {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.btn-cadastrar-wrapper {
+  margin-top: 8px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.erro {
+  color: #e74c3c;
+}
+
+.alerta-erro-container {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.card-global {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.btn-ir-login {
+  background-color: #721c24;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-ir-login:hover {
+  background-color: #a71d2a;
+}
+
+.btn-upload {
+  background-color: #795548;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.btn-upload:hover {
+  background-color: #5d4037;
+  opacity: 0.9;
+}
+
+textarea.input-global {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical; 
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

@@ -1,0 +1,49 @@
+/* Layout Específico do Login */
+
+/* Se quiser forçar o tamanho menor que o padrão global (400px vs 480px) */
+.login-container {
+  max-width: 400px;
+  width: 100%;
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* O H1 usa a classe .title-logo global, aqui só ajustamos a margem se precisar */
+.logo-section h1 {
+  margin-bottom: 8px;
+}
+
+/* O divisor é um elemento decorativo específico */
+.logo-section .divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--secondary));
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+.logo-section .subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--secondary); 
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+/* Espaçamento do botão em relação ao input */
+.btn-entrar-wrapper {
+  margin-top: 8px;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}

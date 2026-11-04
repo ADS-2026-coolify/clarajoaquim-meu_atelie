@@ -1,0 +1,11 @@
+@if (loadingService.carregando()) {
+  <div class="loading-overlay" role="status" aria-live="polite" aria-label="Carregando">
+    <div class="loading-dialog">
+      <svg class="loading-spinner" viewBox="0 0 50 50">
+        <circle class="loading-spinner-track" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        <circle class="loading-spinner-arc" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+      </svg>
+      <span class="loading-text">Carregando...</span>
+    </div>
+  </div>
+}

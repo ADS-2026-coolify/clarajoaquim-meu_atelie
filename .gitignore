@@ -1,0 +1,19 @@
+# segredos
+.env
+*.env.local
+
+# back-end
+backend/target/
+backend/uploads/
+backend/.idea/
+*.iml
+
+# front-end
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.vscode/
+
+# sistema
+.DS_Store
+Thumbs.db

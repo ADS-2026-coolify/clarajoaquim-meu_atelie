@@ -1,0 +1,237 @@
+<app-header></app-header>
+
+<main class="main">
+  <div class="container">
+    <section class="page-header">
+      <div class="page-header-text">
+        <a routerLink="/materiais" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Voltar para Materiais
+        </a>
+        <h2 class="page-title">Nova Entrada de Materiais</h2>
+        <p class="page-subtitle">Adicione os itens do seu pedido antes de salvar no estoque.</p>
+      </div>
+    </section>
+
+    <section class="form-card" style="padding: var(--space-xl);">
+            <h3 class="form-legend">Dados do Pedido</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 class="form-legend" style="border: none; margin: 0;">Itens da Compra</h3>
+        <button class="btn-nova-encomenda" (click)="abrirModalMaterial()" style="padding: 8px 15px; font-size: 14px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar Material
+        </button>
+      </div>
+
+      <div *ngIf="materiaisRascunho.length === 0" style="text-align: center; color: var(--secondary); padding: 40px 0; border: 1px dashed var(--border); border-radius: var(--radius-md);">
+        Nenhum material adicionado ainda.
+      </div>
+
+      <div class="orders-table-wrapper" *ngIf="materiaisRascunho.length > 0">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Categoria</th>
+              <th>Quantidade</th>
+              <th>Unidade</th>
+              <th>Preço Un.</th>
+              <th style="text-align: center;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of materiaisRascunho; let i = index">
+              <td style="font-weight: bold; color: var(--primary);">{{ item.nome }} <br><small style="color: var(--secondary)">{{ item.cor }} | {{ item.marca }}</small></td>
+              <td>{{ item.categoria }}</td>
+              <td>{{ item.quantidadeEstoque }}</td>
+              <td>{{ item.unidadeMedida }}</td>
+              <td>R$ {{ item.precoUnitario }}</td>
+              <td style="text-align: center;">
+                <div class="actions-cell">
+                  <button type="button" class="btn-action" (click)="editarDoRascunho(i)" title="Editar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <button type="button" class="btn-action btn-action--danger" (click)="removerDoRascunho(i)" title="Remover">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-group form-group--full">
+        <h3 class="form-legend" style="border: none; margin: 0;">Fornecedor da Compra *</h3>
+        <div style="display: flex; gap: 10px;">
+          <select [(ngModel)]="fornecedorSelecionadoId" class="form-select">
+            <option [value]="null" disabled selected>Selecione o fornecedor</option>
+            <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome }}</option>
+          </select>
+          <button type="button" class="btn-add" (click)="abrirModalFornecedor()">+ Cadastrar Fornecedor</button>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;" *ngIf="materiaisRascunho.length > 0">
+        <button type="button" class="btn-nova-encomenda" style="width: 100%; justify-content: center; padding: 15px;" (click)="salvarLoteNoBanco()">
+          Salvar Todos no Estoque
+        </button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<dialog id="modal-material" class="dialog-modal" style="max-width: 800px; width: 95%;">
+  <div class="dialog-content">
+    <h3 class="form-legend" style="border: none; margin-bottom: 20px;">{{ modoEdicao ? 'Editar' : 'Detalhes do' }} Material</h3>
+    <form (ngSubmit)="confirmarSalvar()">
+      <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+        
+        <fieldset class="form-section">
+          <legend class="form-legend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-right: 5px; vertical-align: middle;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Identificação do Material
+          </legend>
+          <div class="form-grid">
+            <div class="form-group form-group--full">
+              <label class="form-label">Nome do Material *</label>
+              <input type="text" name="nome" [(ngModel)]="material.nome" class="form-input" placeholder="Ex: Linha mouline azul (#796)" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Categoria *</label>
+              <select name="categoria" [(ngModel)]="material.categoria" class="form-select" required>
+                <option value="" disabled selected>Selecione a categoria</option>
+                <option value="Linhas">Linhas</option>
+                <option value="Tecidos">Tecidos</option>
+                <option value="Aviamentos">Aviamentos</option>
+                <option value="Agulhas">Agulhas</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Código / Referência</label>
+              <input type="text" name="codigoReferencia" [(ngModel)]="material.codigoReferencia" class="form-input" placeholder="Ex: DMC-321">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cor *</label>
+              <input type="text" name="cor" [(ngModel)]="material.cor" class="form-input" placeholder="Ex: Vermelho" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Marca *</label>
+              <input type="text" name="marca" [(ngModel)]="material.marca" class="form-input" placeholder="Ex: DMC" required>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend class="form-legend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-right: 5px; vertical-align: middle;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            Estoque e Custo
+          </legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Quantidade *</label>
+              <input type="text" inputmode="decimal" name="quantidade" [ngModel]="material.quantidadeEstoque" (input)="normalizarDecimal($event, 'quantidadeEstoque')" class="form-input" placeholder="Ex: 0,3" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Unidade *</label>
+              <select name="unidade" [(ngModel)]="material.unidadeMedida" class="form-select" required>
+                <option value="" disabled selected>Selecione a unidade</option>
+                <option value="Meadas">Meadas</option>
+                <option value="Metros">Metros</option>
+                <option value="Unidades">Unidades</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estoque Mínimo</label>
+              <input type="text" inputmode="decimal" name="minimo" [ngModel]="material.estoqueMinimo" (input)="normalizarDecimal($event, 'estoqueMinimo')" class="form-input" placeholder="Ex: 0,5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preço Unitário (R$) *</label>
+              <input type="text" name="preco" [(ngModel)]="material.precoUnitario" (input)="formatarMoeda($event)" class="form-input" placeholder="0,00" required>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend class="form-legend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-right: 5px; vertical-align: middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Observações
+          </legend>
+          <div class="form-group form-group--full">
+            <label class="form-label">Anotações Adicionais</label>
+            <textarea name="anotacoes" [(ngModel)]="material.anotacoes" class="form-textarea" rows="3" placeholder="Ex: Substituir por marca X se não houver..."></textarea>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="form-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary" (click)="fecharModalMaterial()">Cancelar</button>
+        <button type="submit" class="btn-nova-encomenda">Confirmar</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="modal-validacao" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: #f59e0b; margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">Atenção</h3>
+    <p style="margin-bottom: 25px; color: var(--secondary); line-height: 1.5; white-space: pre-line;">{{ mensagemValidacao }}</p>
+    <button type="button" class="btn-nova-encomenda" style="width: 100%; background-color: #f59e0b; border: none;" (click)="fecharValidacao()">OK, Entendi</button>
+  </div>
+</dialog>
+
+<dialog id="modal-sucesso" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: var(--info); margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">Sucesso!</h3>
+    <p style="margin-bottom: 25px; color: var(--secondary);">{{ mensagemSucesso }}</p>
+    <button type="button" class="btn-nova-encomenda" style="width: 100%;" (click)="fecharSucesso()">OK</button>
+  </div>
+</dialog>
+
+<dialog id="modal-confirmacao-salvar" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: var(--primary); margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">{{ modoEdicao ? 'Atualizar' : 'Adicionar' }}?</h3>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+      <button type="button" class="btn-secondary" style="flex: 1;" (click)="fecharConfirmacaoSalvar()">Cancelar</button>
+      <button type="button" class="btn-nova-encomenda" style="flex: 1;" (click)="executarSalvar()">Confirmar</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="modal-fornecedor" class="dialog-modal">
+  <div class="dialog-content">
+    <h3 class="form-legend" style="margin-bottom: var(--space-md); border: none;">Novo Fornecedor</h3>
+    <div class="form-group" style="margin-bottom: var(--space-md)">
+      <label class="form-label">Nome *</label>
+      <input type="text" name="novo-nome" class="form-input" [(ngModel)]="novoFornecedor.nome" placeholder="Ex: Armarinho São José" required>
+    </div>
+    <div class="form-group" style="margin-bottom: var(--space-md)">
+      <label class="form-label">CNPJ / CPF</label>
+      <input type="text" name="novo-doc" class="form-input" [(ngModel)]="novoFornecedor.cnpjCpf" placeholder="Ex: 12.345.678/0001-90" (input)="formatarDocumento($event)" maxlength="18">
+    </div>
+    <div class="form-group" style="margin-bottom: var(--space-md)">
+      <label class="form-label">Telefone</label>
+      <input type="tel" name="novo-tel" class="form-input" [(ngModel)]="novoFornecedor.telefone" placeholder="Ex: (11) 98765-4321" (input)="formatarTelefone($event)" maxlength="15">
+    </div>
+    <div class="form-group" style="margin-bottom: var(--space-lg)">
+      <label class="form-label">Email</label>
+      <input type="email" name="emailForn" [(ngModel)]="novoFornecedor.email" class="form-input" placeholder="exemplo@email.com">
+    </div>
+    <div class="form-actions" style="padding-top: 0; border: none;">
+      <button type="button" class="btn-secondary" (click)="fecharModalFornecedor()">Cancelar</button>
+      <button type="button" class="btn-nova-encomenda" (click)="salvarFornecedor()">Salvar</button>
+    </div>
+  </div>
+</dialog>
+
+<app-footer></app-footer>

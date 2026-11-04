@@ -1,0 +1,287 @@
+<app-header></app-header>
+
+<main class="main">
+  <div class="container">
+
+    <section class="page-header">
+      <div class="page-header-text">
+        <a href="/produtos" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Voltar para Produtos
+        </a>
+        <h2 class="page-title">{{ isEdicao ? 'Editar Produto' : 'Novo Produto' }}</h2>
+        <p class="page-subtitle">{{ isEdicao ? 'Edite as informações do seu produto.' : 'Cadastre um novo produto para
+          venda no seu ateliê.' }}</p>
+      </div>
+    </section>
+
+    <form class="form-card" [formGroup]="produtoForm" (ngSubmit)="salvar()">
+
+      <fieldset class="form-section">
+        <legend class="form-legend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <line x1="7" y1="7" x2="7.01" y2="7" />
+          </svg>
+          Identificação do Produto
+        </legend>
+
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label for="nome" class="form-label">Nome do Produto *</label>
+            <input type="text" id="nome" formControlName="nome" class="form-input"
+              placeholder="Ex: Toalha de mesa bordada floral">
+            @if (produtoForm.get('nome')?.invalid && produtoForm.get('nome')?.touched) {
+            <small class="erro-text">O nome do produto é obrigatório.</small>
+            }
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="descricao" class="form-label">Descrição do Produto *</label>
+            <textarea id="descricao" formControlName="descricao" class="form-textarea" rows="4"
+              placeholder="Descreva o produto em detalhes..."></textarea>
+            @if (produtoForm.get('descricao')?.invalid && produtoForm.get('descricao')?.touched) {
+            <small class="erro-text">A descrição é obrigatória.</small>
+            }
+          </div>
+
+          <div class="form-group form-group--full">
+            <div class="form-group-header">
+              <label for="categoria-produto" class="form-label">Categoria *</label>
+              <button type="button" class="btn-sub-action" (click)="abrirModalCategoria()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                  stroke-linejoin="round" width="14" height="14">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Nova Categoria
+              </button>
+            </div>
+
+            <select id="categoria-produto" formControlName="categoriaId" class="form-select">
+              <option value="" disabled selected>Selecione a categoria</option>
+              @for (cat of categorias; track cat.id) {
+              <option [value]="cat.id">{{ cat.nome }}</option>
+              }
+            </select>
+
+            @if (produtoForm.get('categoriaId')?.invalid && produtoForm.get('categoriaId')?.touched) {
+            <small class="erro-text">Selecione uma categoria.</small>
+            }
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="form-legend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          Imagem do Produto
+        </legend>
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <div class="image-upload-area">
+              @if (imagemPreview) {
+              <div class="image-preview active">
+                <img [src]="imagemPreview" alt="Preview">
+                <button type="button" class="btn-remove-image" (click)="removerImagem($event)">Remover Imagem</button>
+              </div>
+              } @else {
+              <input type="file" (change)="onFileSelected($event)" accept="image/*">
+              <svg class="image-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <span class="image-upload-text">Clique ou arraste uma imagem aqui</span>
+              }
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="form-legend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+          Materiais Utilizados
+        </legend>
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label for="select-materiais" class="form-label">Selecione os materiais</label>
+            <select id="select-materiais" class="form-select" (change)="adicionarMaterial($event)">
+              <option value="" disabled selected>Clique para escolher os materiais...</option>
+              @for (mat of materiaisDisponiveis; track mat.id) {
+              <option [value]="mat.id">{{ mat.nome }}</option>
+              }
+            </select>
+
+            <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+              @for (mat of materiaisSelecionados; track mat.id) {
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
+                <strong style="min-width: 160px;">{{ mat.nome }}</strong>
+
+                <input type="number" min="0" step="any" placeholder="Quantidade" [(ngModel)]="mat.quantidade"
+                  [ngModelOptions]="{standalone: true}" (input)="atualizarCustoCalculado()" class="form-input"
+                  style="width: 120px;">
+
+                @if (mat.unidadeMedida === 'Metros') {
+                <select [(ngModel)]="mat.unidade" [ngModelOptions]="{standalone: true}"
+                  (change)="atualizarCustoCalculado()" class="form-select" style="width: 90px;">
+                  <option value="cm">cm</option>
+                  <option value="m">m</option>
+                </select>
+                } @else {
+                <span style="color: var(--secondary); min-width: 90px;">{{ mat.unidadeMedida }}</span>
+                }
+
+                <span style="color: var(--secondary); font-size: 0.9rem;">
+                  R$ {{ mat.precoUnitario | number:'1.2-2' }} / {{ mat.unidadeMedida }}
+                </span>
+
+                <span style="margin-left: auto; font-weight: 600;">
+                  Custo: R$ {{ calcularCustoLinha(mat) | number:'1.2-2' }}
+                </span>
+
+                <button type="button" (click)="removerMaterial(mat.id)"
+                  style="border:none; background:none; cursor:pointer; color: var(--color-danger);">×</button>
+              </div>
+              }
+            </div>
+
+            @if (materiaisSelecionados.length > 0) {
+            <div style="margin-top: 12px; text-align: right; font-weight: 700;">
+              Custo total estimado dos materiais: R$ {{ custoTotalMateriais | number:'1.2-2' }}
+            </div>
+            }
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="form-legend">Preço e Disponibilidade</legend>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Custo de Produção</label>
+            <div class="price-input-wrapper">
+              <span class="price-prefix">R$</span>
+              <input type="text" formControlName="precoCusto" class="form-input"
+                (input)="formatarMoeda($event, 'precoCusto'); atualizarPrecoVenda()">
+            </div>
+            <small style="color: var(--secondary);">Calculado automaticamente a partir dos materiais informados. Você pode ajustar manualmente.</small>
+          </div>
+
+          <div class="form-group form-group--full">
+            <label class="form-label">Preço de Venda *</label>
+            <small style="color: var(--secondary); display: block; margin-bottom: 10px;">Escolha como definir o preço: digite um valor manualmente, calcule com base em uma porcentagem sobre o custo, ou some um valor fixo ao custo.</small>
+
+            <div class="modo-preco-tabs">
+              <button type="button" class="modo-preco-tab" [class.modo-preco-tab--active]="produtoForm.get('modoPreco')?.value === 'manual'"
+                (click)="selecionarModoPreco('manual')">Manual</button>
+              <button type="button" class="modo-preco-tab" [class.modo-preco-tab--active]="produtoForm.get('modoPreco')?.value === 'percentual'"
+                (click)="selecionarModoPreco('percentual')">Porcentagem sobre o custo</button>
+              <button type="button" class="modo-preco-tab" [class.modo-preco-tab--active]="produtoForm.get('modoPreco')?.value === 'valor'"
+                (click)="selecionarModoPreco('valor')">Valor fixo sobre o custo</button>
+            </div>
+
+            @if (produtoForm.get('modoPreco')?.value === 'percentual') {
+            <div class="form-group" style="max-width: 220px; margin-bottom: 10px;">
+              <label class="form-label">Margem (%)</label>
+              <input type="number" min="0" step="any" formControlName="percentualMargem" class="form-input"
+                (input)="atualizarPrecoVenda()" placeholder="Ex: 150">
+            </div>
+            }
+
+            @if (produtoForm.get('modoPreco')?.value === 'valor') {
+            <div class="form-group" style="max-width: 220px; margin-bottom: 10px;">
+              <label class="form-label">Valor adicional (R$)</label>
+              <input type="text" formControlName="valorAdicionalVenda" class="form-input"
+                (input)="formatarMoeda($event, 'valorAdicionalVenda'); atualizarPrecoVenda()" placeholder="Ex: 15,00">
+            </div>
+            }
+
+            <div class="price-input-wrapper">
+              <span class="price-prefix">R$</span>
+              <input type="text" formControlName="preco" class="form-input" (input)="formatarMoeda($event, 'preco')"
+                [readonly]="produtoForm.get('modoPreco')?.value !== 'manual'">
+            </div>
+            @if (produtoForm.get('modoPreco')?.value !== 'manual') {
+            <small style="color: var(--secondary);">Calculado automaticamente a partir do custo de produção.</small>
+            }
+          </div>
+          <div class="form-group form-group--full">
+            <label class="form-label">Status</label>
+            <div class="status-options">
+              <label class="status-option" [class.active]="produtoForm.get('status')?.value === 'disponivel'">
+                <input type="radio" formControlName="status" value="disponivel">
+                <span class="status-dot status-dot--disponivel"></span> Disponível
+              </label>
+              <label class="status-option" [class.active]="produtoForm.get('status')?.value === 'indisponivel'">
+                <input type="radio" formControlName="status" value="indisponivel">
+                <span class="status-dot status-dot--indisponivel"></span> Indisponível
+              </label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <a href="/produtos" class="btn-secondary">Cancelar</a>
+        <button type="submit" class="btn-salvar">Salvar Produto</button>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<dialog #modalCategoria class="modal">
+  <div class="modal-content">
+    <h3>Nova Categoria</h3>
+    <div class="form-group">
+      <label>Nome</label>
+      <input type="text" [(ngModel)]="novaCategoriaNome" [ngModelOptions]="{standalone: true}" class="form-input">
+    </div>
+    <div class="form-group">
+      <label>Descrição</label>
+      <textarea [(ngModel)]="novaCategoriaDescricao" [ngModelOptions]="{standalone: true}" class="form-textarea"></textarea>
+    </div>
+    <div class="form-actions" style="border:none; padding:0; justify-content: flex-end;">
+      <button type="button" class="btn-secondary" (click)="fecharModalCategoria()">Cancelar</button>
+      <button type="button" class="btn-salvar" (click)="salvarCategoria()">Salvar</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+  
+  <div #toastElement class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" class="me-2" style="color: #27ae60;">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <strong class="me-auto">Sucesso!</strong>
+      <small class="text-muted ms-2">Agora mesmo</small>
+      <button type="button" class="btn-close ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Categoria cadastrada com sucesso!
+    </div>
+  </div>
+
+</div>
+
+<app-modal></app-modal>
+<app-footer></app-footer>

@@ -1,0 +1,53 @@
+<div class="card-principal">
+<div class="card-global login-container">
+  
+  <div class="logo-section">
+    <h1 class="title-logo">Meu Ateliê</h1>
+    <p class="subtitle">Gestão de Encomendas e Custos</p>
+    <div class="divider"></div>
+  </div>
+
+  <form (ngSubmit)="fazerLogin()">
+
+    <div class="form-group">
+      <label for="email" class="label-global">Email</label>
+      <input 
+  type="email" 
+  id="email" 
+  class="input-global" 
+  placeholder="Digite seu email"
+  [(ngModel)]="email"
+  name="email"
+  required>
+
+    </div>
+
+    <div class="form-group">
+      <label for="senha" class="label-global">Senha</label>
+      <input 
+  type="password" 
+  id="senha" 
+  class="input-global" 
+  placeholder="Digite sua senha"
+  [(ngModel)]="senha"
+  name="senha"
+  required>
+
+    </div>
+
+    <div class="btn-entrar-wrapper">
+      <button type="submit" class="btn-primary-global">
+        Entrar
+      </button>
+    </div>
+  </form>
+
+  <div class="register-link">
+    <span>Ainda não tem conta? </span>
+    <a href="/cadastro" class="link-text">Criar nova conta</a>
+  </div>
+
+</div>
+</div>
+
+<app-modal></app-modal>

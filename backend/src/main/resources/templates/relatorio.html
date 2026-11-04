@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Relatório</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 18mm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #3d2010;
+            font-size: 12px;
+        }
+        .cabecalho {
+            border-bottom: 2px solid #743c14;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+        .cabecalho .loja {
+            font-size: 20px;
+            font-weight: bold;
+            color: #743c14;
+        }
+        .cabecalho .periodo {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .cabecalho .emissao {
+            font-size: 10px;
+            color: #8f5024;
+            margin-top: 4px;
+        }
+        .indicadores {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .indicadores td {
+            width: 25%;
+            border: 1px solid #e8d5c4;
+            padding: 10px;
+            text-align: center;
+        }
+        .indicadores .valor {
+            font-size: 16px;
+            font-weight: bold;
+            color: #743c14;
+        }
+        .indicadores .rotulo {
+            font-size: 10px;
+            color: #8f5024;
+            margin-top: 4px;
+        }
+        h2 {
+            font-size: 14px;
+            color: #743c14;
+            border-bottom: 1px solid #e8d5c4;
+            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        table.dados {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table.dados th {
+            background-color: #fdf0e2;
+            color: #743c14;
+            text-align: left;
+            padding: 6px 8px;
+            font-size: 10px;
+        }
+        table.dados td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #f0e0d0;
+            font-size: 11px;
+        }
+        .sem-dados {
+            font-size: 11px;
+            color: #8f5024;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cabecalho">
+    <div class="loja" th:text="${nomeLoja}">Nome da Loja</div>
+    <div class="periodo">Relatório de desempenho &ndash; <span th:text="${rotuloPeriodo}">Período</span></div>
+    <div class="emissao">Emitido em <span th:text="${dataEmissao}">00/00/0000</span></div>
+</div>
+
+<table class="indicadores">
+    <tr>
+        <td>
+            <div class="valor" th:text="${faturamento}">R$ 0,00</div>
+            <div class="rotulo">Faturamento</div>
+        </td>
+        <td>
+            <div class="valor" th:text="${totalPedidos}">0</div>
+            <div class="rotulo">Pedidos</div>
+        </td>
+        <td>
+            <div class="valor" th:text="${novosClientes}">0</div>
+            <div class="rotulo">Novos clientes</div>
+        </td>
+        <td>
+            <div class="valor" th:text="${ticketMedio}">R$ 0,00</div>
+            <div class="rotulo">Ticket médio</div>
+        </td>
+    </tr>
+</table>
+
+<h2>Tipos de Bordado Mais Pedidos</h2>
+<table class="dados" th:if="${not #lists.isEmpty(rankingProdutos)}">
+    <thead>
+        <tr>
+            <th>Posição</th>
+            <th>Tipo de Bordado</th>
+            <th>Quantidade</th>
+            <th>Receita</th>
+            <th>% do Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item : ${rankingProdutos}">
+            <td th:text="${item.posicao}">1</td>
+            <td th:text="${item.nomeProduto}">Produto</td>
+            <td th:text="${item.quantidadeVendida}">0</td>
+            <td th:text="${#numbers.formatCurrency(item.receita)}">R$ 0,00</td>
+            <td th:text="${#numbers.formatDecimal(item.percentualReceita, 1, 0)} + '%'">0%</td>
+        </tr>
+    </tbody>
+</table>
+<p class="sem-dados" th:if="${#lists.isEmpty(rankingProdutos)}">Nenhum produto vendido neste período.</p>
+
+<h2>Melhores Clientes do Período</h2>
+<table class="dados" th:if="${not #lists.isEmpty(rankingClientes)}">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Pedidos</th>
+            <th>Valor Total</th>
+            <th>Último Pedido</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="cliente : ${rankingClientes}">
+            <td th:text="${cliente.nomeCliente}">Cliente</td>
+            <td th:text="${cliente.totalPedidos}">0</td>
+            <td th:text="${#numbers.formatCurrency(cliente.valorTotal)}">R$ 0,00</td>
+            <td th:text="${cliente.dataUltimoPedido != null ? #temporals.format(cliente.dataUltimoPedido, 'dd/MM/yyyy') : '-'}">00/00/0000</td>
+        </tr>
+    </tbody>
+</table>
+<p class="sem-dados" th:if="${#lists.isEmpty(rankingClientes)}">Nenhum cliente com pedidos neste período.</p>
+
+</body>
+</html>

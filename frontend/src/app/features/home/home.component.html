@@ -1,0 +1,102 @@
+<app-header></app-header>
+
+  <main class="main" *ngIf="dashboard">
+    <div class="container">
+
+      <section class="welcome-section">
+  <div class="welcome-text">
+    <h2 class="welcome-title">{{ saudacao }}, {{ dashboard.nomeUsuario }}!</h2>
+    <p class="welcome-subtitle">Aqui está o resumo das suas encomendas de hoje.</p>
+  </div>
+</section>
+
+      <section class="summary-section" aria-label="Resumo dos pedidos">
+        <div class="summary-cards">
+          <article class="summary-card summary-card--progress">
+            <div class="card-icon-wrapper card-icon--progress">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ dashboard.resumo.emAndamento }}</span>
+              <span class="card-label">Em andamento</span>
+            </div>
+          </article>
+
+          <article class="summary-card summary-card--done">
+            <div class="card-icon-wrapper card-icon--done">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ dashboard.resumo.finalizados }}</span>
+              <span class="card-label">Finalizados</span>
+            </div>
+          </article>
+
+          <article class="summary-card summary-card--late">
+            <div class="card-icon-wrapper card-icon--late">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="card-content">
+              <span class="card-number">{{ dashboard.resumo.atrasados }}</span>
+              <span class="card-label">Atrasados</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="alerts-section" aria-label="Alertas e avisos" *ngIf="dashboard.alertas?.length > 0">
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Alertas
+        </h3>
+        <div class="alerts-list">
+          <div class="alert-item" [ngClass]="'alert-item--' + alerta.tipo" *ngFor="let alerta of dashboard.alertas">
+            <div class="alert-dot" [ngClass]="'alert-dot--' + alerta.tipo"></div>
+            <div class="alert-content">
+              <strong class="alert-title">{{ alerta.titulo }}</strong>
+              <p class="alert-text">{{ alerta.mensagem }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="orders-section" aria-label="Pedidos recentes">
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          Pedidos Recentes
+        </h3>
+        <div class="orders-table-wrapper">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Prazo</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pedido of dashboard.pedidosRecentes">
+                <td data-label="Pedido">#{{ pedido.idVisual?.toString().padStart(3, '0') }}</td>
+                <td data-label="Cliente">{{ pedido.nomeCliente }}</td>
+                <td data-label="Tipo">{{ pedido.tipoPrincipal }}</td>
+                <td data-label="Prazo">{{ pedido.dataEntrega | date:'dd/MM/yyyy' }}</td>
+                <td data-label="Status">
+                  <span class="status-badge" [ngClass]="getClasseStatus(pedido.status)">
+                    {{ getLabelStatus(pedido.status) }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="dashboard.pedidosRecentes?.length === 0">
+                <td colspan="5" style="text-align: center; color: var(--text-muted);">Nenhum pedido recente.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+<app-footer></app-footer>

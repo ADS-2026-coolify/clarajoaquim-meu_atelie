@@ -1,0 +1,620 @@
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+/* ============================================
+   CABECALHO
+   ============================================ */
+.header {
+  background-color: var(--surface);
+  border-bottom: 2px solid var(--border);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--primary);
+}
+
+.logo-icon {
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+}
+
+/* Navegacao desktop */
+.nav {
+  display: none;
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--secondary);
+  transition: background var(--transition), color var(--transition);
+}
+
+.nav-link:hover {
+  background-color: var(--accent);
+  color: var(--primary);
+}
+
+.nav-link--active {
+  background-color: var(--primary);
+  color: var(--surface);
+}
+
+.nav-link--active:hover {
+  background-color: var(--secondary);
+  color: var(--surface);
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Hamburger mobile */
+.hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  color: var(--primary);
+  transition: background var(--transition);
+}
+
+.hamburger:hover {
+  background-color: var(--accent);
+}
+
+
+/* ============================================
+   MENU MOBILE (CSS-only via :target)
+   ============================================ */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.mobile-menu:target {
+  display: flex;
+}
+
+.mobile-menu-overlay {
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-xl);
+}
+
+.mobile-menu-close {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  color: var(--primary);
+  transition: background var(--transition);
+}
+
+.mobile-menu-close:hover {
+  background-color: var(--accent);
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+}
+
+.mobile-nav-link {
+  display: block;
+  padding: var(--space-lg) var(--space-md);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--secondary);
+  border-radius: var(--radius);
+  transition: background var(--transition), color var(--transition);
+}
+
+.mobile-nav-link:hover {
+  background-color: var(--accent);
+  color: var(--primary);
+}
+
+.mobile-nav-link--active {
+  background-color: var(--primary);
+  color: var(--surface);
+}
+
+
+/* ============================================
+   CONTEUDO PRINCIPAL
+   ============================================ */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+
+/* ============================================
+   SECAO DE BOAS-VINDAS + BOTAO NOVA ENCOMENDA
+   ============================================ */
+.welcome-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.welcome-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.3;
+}
+
+.welcome-subtitle {
+  font-size: 1.05rem;
+  color: var(--secondary);
+  margin-top: var(--space-xs);
+}
+
+/* Botao grande e destacado para nova encomenda */
+.btn-nova-encomenda {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background-color: var(--primary);
+  color: var(--surface);
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+  /* Botao grande para facil interacao */
+  min-height: 56px;
+  text-align: center;
+  align-self: flex-start;
+}
+
+.btn-nova-encomenda:hover {
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn-nova-encomenda:active {
+  transform: translateY(0);
+}
+
+
+/* ============================================
+   CARDS DE RESUMO
+   ============================================ */
+.summary-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+.summary-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.summary-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Icone do card */
+.card-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.card-icon--progress {
+  background-color: var(--accent);
+  color: var(--primary);
+}
+
+.card-icon--done {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.card-icon--late {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* Conteudo do card */
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-number {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-input);
+}
+
+.card-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--secondary);
+  margin-top: var(--space-xs);
+}
+
+
+/* ============================================
+   TITULOS DE SECAO
+   ============================================ */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: var(--space-md);
+}
+
+
+/* ============================================
+   AREA DE ALERTAS
+   ============================================ */
+.alerts-section {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius);
+  border-left: 4px solid transparent;
+}
+
+.alert-item--warning {
+  background-color: var(--color-warning-bg);
+  border-left-color: var(--color-warning);
+}
+
+.alert-item--danger {
+  background-color: var(--color-danger-bg);
+  border-left-color: var(--color-danger);
+}
+
+.alert-item--info {
+  background-color: var(--color-info-bg);
+  border-left-color: var(--color-info);
+}
+
+/* Indicador de cor do alerta */
+.alert-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.alert-dot--warning {
+  background-color: var(--color-warning);
+}
+
+.alert-dot--danger {
+  background-color: var(--color-danger);
+}
+
+.alert-dot--info {
+  background-color: var(--color-info);
+}
+
+.alert-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-input);
+  display: block;
+}
+
+.alert-text {
+  font-size: 0.9rem;
+  color: var(--secondary);
+  margin-top: var(--space-xs);
+  line-height: 1.5;
+}
+
+
+/* ============================================
+   TABELA DE PEDIDOS RECENTES
+   ============================================ */
+.orders-section {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.orders-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.orders-table thead {
+  display: none;
+}
+
+.orders-table th {
+  text-align: left;
+  padding: var(--space-md) var(--space-lg);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--secondary);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.orders-table td {
+  padding: var(--space-md) var(--space-lg);
+  color: var(--text-input);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.orders-table tbody tr {
+  transition: background var(--transition);
+}
+
+.orders-table tbody tr:hover {
+  background-color: var(--accent);
+}
+
+.orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Badges de status */
+.status-badge {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status--progress {
+  background-color: var(--accent);
+  color: var(--primary);
+}
+
+.status--done {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.status--late {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+
+/* ============================================
+   RODAPE
+   ============================================ */
+.footer {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  margin-top: var(--space-xl);
+  border-top: 1px solid var(--border);
+}
+
+.footer-text {
+  font-size: 0.85rem;
+  color: var(--secondary);
+}
+
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+
+/* ------- Mobile: Tabela em formato de cards ------- */
+@media (max-width: 767px) {
+  .orders-table tbody tr {
+    display: block;
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--input-bg);
+  }
+
+  .orders-table tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+  }
+
+  .orders-table td:last-child {
+    border-bottom: none;
+  }
+
+  .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--secondary);
+    font-size: 0.85rem;
+    margin-right: var(--space-md);
+    flex-shrink: 0;
+  }
+}
+
+/* ------- Tablet (768px+) ------- */
+@media (min-width: 768px) {
+
+  .container {
+    gap: var(--space-2xl);
+  }
+
+  /* Cards de resumo em grid de 3 colunas */
+  .summary-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  /* Boas-vindas em linha */
+  .welcome-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .welcome-title {
+    font-size: 1.85rem;
+  }
+
+  .orders-table thead {
+    display: table-header-group;
+  }
+
+  .orders-table td::before {
+    display: none;
+  }
+
+  .orders-table tbody tr {
+    display: table-row;
+  }
+
+  .orders-table td {
+    display: table-cell;
+  }
+}
+
+/* ------- Desktop (1024px+) ------- */
+@media (min-width: 1024px) {
+  .nav {
+    display: block;
+  }
+
+  .hamburger {
+    display: none;
+  }
+
+  .welcome-title {
+    font-size: 2rem;
+  }
+
+  /* Mais espacamento nos cards */
+  .summary-card {
+    padding: var(--space-2xl);
+  }
+
+  .card-number {
+    font-size: 2.5rem;
+  }
+}

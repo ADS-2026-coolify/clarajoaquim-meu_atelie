@@ -1,0 +1,406 @@
+<app-header></app-header>
+
+<main class="main">
+  <div class="container">
+
+    <section class="page-header">
+      <div class="page-header-text">
+        <h2 class="page-title">Materiais</h2>
+        <p class="page-subtitle">Controle o estoque de linhas, tecidos e aviamentos.</p>
+      </div>
+      <a routerLink="/materiais/cadastro" class="btn-nova-encomenda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round" width="22" height="22">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Novo Material
+      </a>
+    </section>
+
+    <section class="summary-section" aria-label="Resumo do estoque">
+      <div class="summary-cards">
+        <article class="summary-card summary-card--progress">
+          <div class="card-icon-wrapper card-icon--progress">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="28" height="28">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-number">{{ listaMateriais.length }}</span>
+            <span class="card-label">Itens em estoque</span>
+          </div>
+        </article>
+        <article class="summary-card summary-card--done">
+          <div class="card-icon-wrapper card-icon--done">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="28" height="28">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-number" style="display: block; font-size: 28px; font-weight: bold;">{{ qtdEstoqueNormal
+              }}</span>
+            <span class="card-label" style="font-size: 16px; font-weight: bold; margin-top: 5px;">Estoque Normal</span>
+          </div>
+        </article>
+        <article class="summary-card summary-card--late">
+          <div class="card-icon-wrapper card-icon--late">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="28" height="28">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </div>
+          <div class="card-content">
+            <span class="card-number" style="display: block; font-size: 28px; font-weight: bold;">{{ qtdEstoqueBaixo
+              }}</span>
+            <span class="card-label" style="font-size: 16px; font-weight: bold; margin-top: 5px;">Atenção
+              Necessária</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="alerts-section" aria-label="Alertas de estoque" *ngIf="listaEstoqueBaixo.length > 0">
+      <h3 class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" width="20" height="20">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+        Estoque Baixo - Reposição Necessária
+      </h3>
+      <div class="alerts-list">
+        <div class="alert-item alert-item--danger" *ngFor="let item of listaEstoqueBaixo">
+          <div class="alert-dot alert-dot--danger"></div>
+          <div class="alert-content">
+            <strong class="alert-title">{{ item.nome }} <span *ngIf="item.codigoReferencia">(#{{ item.codigoReferencia
+                }})</span></strong>
+            <p class="alert-text">Restam apenas {{ item.quantidadeEstoque }} {{ item.unidadeMedida }}. Mínimo
+              recomendado: {{ item.estoqueMinimo }}.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="search-section" aria-label="Buscar materiais">
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" class="search-input" placeholder="Buscar por nome, categoria ou código..."
+          [(ngModel)]="termoPesquisa" (input)="filtrarMateriais()">
+      </div>
+
+      <div class="filters-section">
+        <div class="filter-tabs" style="margin-top: 10px; gap: 10px;">
+          <button class="filter-tab" [class.filter-tab--active]="filtroStatus === 'todos'" (click)="selecionarFiltroStatus('todos')">
+            Todos <span class="filter-count">{{ countTodosMateriais }}</span>
+          </button>
+          <button class="filter-tab" [class.filter-tab--active]="filtroStatus === 'disponivel'" (click)="selecionarFiltroStatus('disponivel')">
+            Disponíveis <span class="filter-count">{{ countMateriaisDisponiveis }}</span>
+          </button>
+          <button class="filter-tab" [class.filter-tab--active]="filtroStatus === 'indisponivel'" (click)="selecionarFiltroStatus('indisponivel')">
+            Indisponíveis <span class="filter-count">{{ countMateriaisIndisponiveis }}</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="orders-section" aria-label="Lista de materiais">
+      <h3 class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" width="20" height="20">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="9" y1="21" x2="9" y2="9" />
+        </svg>
+        Todos os Materiais
+      </h3>
+      <div class="orders-table-wrapper">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Categoria</th>
+              <th>Quantidade</th>
+              <th>Unidade</th>
+              <th>Fornecedor</th>
+              <th>Status</th>
+              <th>Disponibilidade</th>
+              <th style="text-align: center;">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="listaMateriaisFiltrada.length === 0">
+              <td colspan="8" style="text-align: center; padding: 30px; color: #666;">
+                {{ termoPesquisa ? 'Nenhum material encontrado para a pesquisa "' + termoPesquisa + '".' : 'Nenhum material encontrado.' }}
+              </td>
+            </tr>
+            <tr *ngFor="let item of listaMateriaisFiltrada">
+              <td data-label="Material">{{ item.nome }}</td>
+              <td data-label="Categoria">{{ item.categoria }}</td>
+              <td data-label="Quantidade">{{ item.quantidadeEstoque }}</td>
+              <td data-label="Unidade">{{ item.unidadeMedida }}</td>
+              <td data-label="Fornecedor">{{ item.fornecedor || '-' }}</td>
+              <td data-label="Status">
+                <span class="status-badge"
+                  [ngClass]="(item.estoqueMinimo != null && item.quantidadeEstoque <= item.estoqueMinimo) ? 'status--late' : 'status--done'">
+                  {{ (item.estoqueMinimo != null && item.quantidadeEstoque <= item.estoqueMinimo) ? 'Crítico' : 'Normal'
+                    }} </span>
+              </td>
+              <td data-label="Disponibilidade">
+                <span class="status-badge" [ngClass]="item.status === 'indisponivel' ? 'status--late' : 'status--done'">
+                  {{ item.status === 'indisponivel' ? 'Indisponível' : 'Disponível' }}
+                </span>
+              </td>
+              <td style="text-align: center;">
+                <div class="actions-cell">
+                  <button type="button" class="btn-action" (click)="editarMaterial(item)" title="Editar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" width="16" height="16">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-action" (click)="alternarStatus(item)"
+                    [title]="item.status === 'indisponivel' ? 'Ativar' : 'Desativar'">
+                    <svg *ngIf="item.status !== 'indisponivel'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                    </svg>
+                    <svg *ngIf="item.status === 'indisponivel'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <polyline points="1 20 1 14 7 14"></polyline>
+                      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                  </button>
+                  <button type="button" class="btn-action btn-action--danger" (click)="abrirConfirmacaoDelecao(item.id)" title="Excluir">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" width="16" height="16">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<dialog id="modal-material" class="dialog-modal" style="max-width: 800px; width: 95%;">
+  <div class="dialog-content">
+    <h2 class="title-logo" style="font-size: 28px; margin-bottom: var(--space-lg)">{{ modoEdicao ? 'Editar' :
+      'Cadastrar' }} Material</h2>
+
+    <form (ngSubmit)="confirmarSalvar()">
+      <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+
+        <fieldset class="form-section">
+          <legend class="form-legend">Identificação</legend>
+          <div class="form-grid">
+            <div class="form-group form-group--full">
+              <label class="form-label">Nome do Material *</label>
+              <input type="text" name="nome" [(ngModel)]="material.nome" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Categoria *</label>
+              <select name="categoria" [(ngModel)]="material.categoria" class="form-select" required>
+                <option value="Linhas">Linhas</option>
+                <option value="Tecidos">Tecidos</option>
+                <option value="Aviamentos">Aviamentos</option>
+                <option value="Agulhas">Agulhas</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cor</label>
+              <input type="text" name="cor" [(ngModel)]="material.cor" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cód / Ref</label>
+              <input type="text" name="codigoReferencia" [(ngModel)]="material.codigoReferencia" class="form-input">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend class="form-legend">Estoque</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Quantidade *</label>
+              <input type="text" inputmode="decimal" name="quantidade" [ngModel]="material.quantidadeEstoque" (input)="normalizarDecimal($event, 'quantidadeEstoque')" class="form-input"
+                required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Unidade *</label>
+              <select name="unidade" [(ngModel)]="material.unidadeMedida" class="form-select" required>
+                <option value="Meadas">Meadas</option>
+                <option value="Metros">Metros</option>
+                <option value="Unidades">Unidades</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estoque Mínimo</label>
+              <input type="text" inputmode="decimal" name="minimo" [ngModel]="material.estoqueMinimo" (input)="normalizarDecimal($event, 'estoqueMinimo')" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Disponibilidade</label>
+              <select name="status" [(ngModel)]="material.status" class="form-select">
+                <option value="disponivel">Disponível</option>
+                <option value="indisponivel">Indisponível</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend class="form-legend">Fornecedor e Custo</legend>
+          <div class="form-grid">
+            <div class="form-group form-group--full">
+              <label class="form-label">Fornecedor</label>
+              <div style="display: flex; gap: 10px;">
+                <select name="fornecedorId" [(ngModel)]="material.fornecedorId" class="form-select">
+                  <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome }}</option>
+                </select>
+                <button type="button" class="btn-add" (click)="abrirModalFornecedor()">+ Cadastrar Fornecedor</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preço Unitário (R$)</label>
+              <input type="number" name="preco" step="0.01" min="0" [(ngModel)]="material.precoUnitario" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Última Compra</label>
+              <input type="date" name="data" [(ngModel)]="material.dataUltimaCompra" class="form-input">
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="form-actions" style="margin-top: 20px;">
+        <button type="button" class="btn-secondary" (click)="fecharModalMaterial()">Cancelar</button>
+        <button type="submit" class="btn-nova-encomenda">Salvar Material</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="modal-fornecedor" class="dialog-modal">
+  <div class="dialog-content">
+    <h3 class="title-logo" style="font-size: 22px; margin-bottom: 15px;">Novo Fornecedor</h3>
+    <div class="form-group">
+      <label class="form-label">Nome *</label>
+      <input type="text" [(ngModel)]="novoFornecedor.nome" class="form-input">
+    </div>
+    <div class="form-group">
+      <label class="form-label">CNPJ/CPF</label>
+      <input type="text" [(ngModel)]="novoFornecedor.cnpjCpf" (input)="formatarDocumento($event)" class="form-input">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Telefone</label>
+      <input type="text" [(ngModel)]="novoFornecedor.telefone" (input)="formatarTelefone($event)" class="form-input">
+    </div>
+    <div class="form-actions" style="border: none;">
+      <button type="button" class="btn-secondary" (click)="fecharModalFornecedor()">Cancelar</button>
+      <button type="button" class="btn-nova-encomenda" (click)="salvarFornecedor()">Salvar Fornecedor</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="modal-confirmacao-salvar" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: var(--primary); margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" width="48" height="48">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+        <polyline points="17 21 17 13 7 13 7 21" />
+        <polyline points="7 3 7 8 15 8" />
+      </svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">Confirmar {{ modoEdicao ? 'Atualização' :
+      'Cadastro' }}?</h3>
+    <p style="margin-bottom: 25px; color: var(--secondary); line-height: 1.5;">Tem certeza que deseja {{ modoEdicao ?
+      'atualizar os dados deste' : 'salvar este novo' }} material?</p>
+
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button type="button" class="btn-secondary" style="flex: 1;" (click)="fecharConfirmacaoSalvar()">Cancelar</button>
+      <button type="button" class="btn-nova-encomenda" style="flex: 1;" (click)="executarSalvar()">Sim, {{ modoEdicao ?
+        'Atualizar' : 'Salvar' }}</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="modal-confirmacao" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: var(--color-danger); margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" width="48" height="48">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">Tem certeza?</h3>
+    <p style="margin-bottom: 25px; color: var(--secondary); line-height: 1.5;">Essa ação não pode ser desfeita. O
+      material será removido permanentemente do seu estoque.</p>
+
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button type="button" class="btn-secondary" style="flex: 1;"
+        (click)="fecharConfirmacaoDelecao()">Cancelar</button>
+      <button type="button" class="btn-nova-encomenda"
+        style="flex: 1; background-color: var(--color-danger); border-color: var(--color-danger); color: white;"
+        (click)="executarDelecao()">Sim, Excluir</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="modal-sucesso" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: var(--info); margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" width="48" height="48">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">Sucesso!</h3>
+    <p style="margin-bottom: 25px; color: var(--secondary); line-height: 1.5;">{{ mensagemSucesso }}</p>
+
+    <button type="button" class="btn-nova-encomenda" style="width: 100%; justify-content: center;"
+      (click)="fecharSucesso()">OK</button>
+  </div>
+</dialog>
+
+<dialog id="modal-erro" class="dialog-modal" style="max-width: 400px; text-align: center;">
+  <div class="dialog-content">
+    <div style="color: var(--color-danger); margin-bottom: 15px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" width="48" height="48">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    </div>
+    <h3 class="title-logo" style="font-size: 24px; margin-bottom: 10px;">Não foi possível excluir</h3>
+    <p style="margin-bottom: 25px; color: var(--secondary); line-height: 1.5;">{{ mensagemErro }}</p>
+
+    <button type="button" class="btn-secondary" style="width: 100%; justify-content: center;"
+      (click)="fecharErro()">Fechar</button>
+  </div>
+</dialog>
+
+<app-footer></app-footer>

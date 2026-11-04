@@ -1,0 +1,216 @@
+<app-header></app-header>
+
+<main class="main">
+  <div class="container">
+
+    <section class="page-header">
+      <div class="page-header-text">
+        <h2 class="page-title">Meu Perfil</h2>
+        <p class="page-subtitle">Gerencie as informações da sua loja e do seu usuário.</p>
+      </div>
+    </section>
+
+    <section class="profile-avatar-section">
+      
+      <input type="file" #fileInput accept="image/*" style="display: none;" (change)="onArquivoSelecionado($event)">
+
+      <div class="avatar-wrapper">
+        <div class="avatar-circle" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          @if (loja.fotoUrl) {
+            <img [src]="urlServidorImagem + loja.fotoUrl" alt="Avatar da Loja" style="width: 100%; height: 100%; object-fit: cover;">
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          }
+        </div>
+        
+        <button class="avatar-edit-btn" type="button" title="Alterar foto" (click)="fileInput.click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+      </div>
+      
+      <div>
+        <p class="avatar-name">{{ loja.nome || 'Carregando...' }}</p>
+        <p class="avatar-email">{{ loja.email || 'Não informado' }}</p>
+      </div>
+    </section>
+
+    <form class="form-card" (ngSubmit)="salvarAlteracoes()">
+
+      <fieldset class="form-section">
+        <legend class="form-legend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Dados da Loja
+        </legend>
+
+        <div class="form-grid">
+          
+          <div class="form-group form-group--full">
+            <label for="loja-nome" class="form-label">Nome da Loja *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.nome || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-nome" name="nome" [(ngModel)]="loja.nome" class="form-input" placeholder="Ex: Ateliê da Clara" required>
+            }
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="loja-descricao" class="form-label">Descrição da Loja</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.descricao || 'Não informado' }}</p>
+            } @else {
+              <textarea id="loja-descricao" name="descricao" [(ngModel)]="loja.descricao" class="form-textarea" rows="3" placeholder="Descreva sua loja, o que você faz, seus diferenciais..."></textarea>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-cnpj" class="form-label">CNPJ</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.cnpj || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-cnpj" name="cnpj" [(ngModel)]="loja.cnpj" class="form-input" placeholder="00.000.000/0000-00" maxlength="18">
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-whatsapp" class="form-label">WhatsApp</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.whatsapp || 'Não informado' }}</p>
+            } @else {
+              <div class="input-with-icon">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                </span>
+                <input type="tel" id="loja-whatsapp" name="whatsapp" [(ngModel)]="loja.whatsapp" class="form-input" placeholder="(00) 00000-0000">
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-facebook" class="form-label">Facebook</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.facebook || 'Não informado' }}</p>
+            } @else {
+              <div class="input-with-icon">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                </span>
+                <input type="text" id="loja-facebook" name="facebook" [(ngModel)]="loja.facebook" class="form-input" placeholder="facebook.com/sualoja">
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-instagram" class="form-label">Instagram</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.instagram || 'Não informado' }}</p>
+            } @else {
+              <div class="input-with-icon">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </span>
+                <input type="text" id="loja-instagram" name="instagram" [(ngModel)]="loja.instagram" class="form-input" placeholder="&#64;sualoja">
+              </div>
+            }
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="form-legend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Endereço da Loja
+        </legend>
+        <p style="font-size: 0.85rem; color: var(--text-placeholder); margin-top: -8px; margin-bottom: 12px;">Obrigatório para emitir recibos de encomendas.</p>
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="loja-cep" class="form-label">CEP *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.cep || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-cep" name="cep" [ngModel]="loja.endereco?.cep"
+                     (input)="aplicarMascaraCep($event)" (blur)="buscarCep()"
+                     class="form-input" placeholder="00000-000" maxlength="9" required>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-rua" class="form-label">Rua *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.rua || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-rua" name="rua" [(ngModel)]="loja.endereco!.rua" class="form-input" placeholder="Nome da rua" required>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-numero" class="form-label">Número *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.numero || 'Não informado' }}</p>
+            } @else {
+              <input type="number" id="loja-numero" name="numero" [(ngModel)]="loja.endereco!.numero" class="form-input" required>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-complemento" class="form-label">Complemento</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.complemento || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-complemento" name="complemento" [(ngModel)]="loja.endereco!.complemento" class="form-input" placeholder="Apto, sala, bloco...">
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-bairro" class="form-label">Bairro *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.bairro || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-bairro" name="bairro" [(ngModel)]="loja.endereco!.bairro" class="form-input" required>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-cidade" class="form-label">Cidade *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.cidade || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-cidade" name="cidade" [(ngModel)]="loja.endereco!.cidade" class="form-input" required>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="loja-estado" class="form-label">Estado *</label>
+            @if (!editando) {
+              <p class="form-text">{{ loja.endereco?.estado || 'Não informado' }}</p>
+            } @else {
+              <input type="text" id="loja-estado" name="estado" [(ngModel)]="loja.endereco!.estado" class="form-input" placeholder="UF" maxlength="2" required>
+            }
+          </div>
+
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        @if (!editando) {
+          <button type="button" class="btn-primary" (click)="alternarEdicao()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="margin-right: 8px; vertical-align: middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar Perfil
+          </button>
+        } @else {
+          <button type="button" class="btn-secondary" (click)="alternarEdicao()">Cancelar</button>
+          <button type="submit" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="margin-right: 8px; vertical-align: middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Salvar Alterações
+          </button>
+        }
+      </div>
+
+    </form>
+
+  </div>
+</main>
+
+<app-modal></app-modal>
+<app-footer></app-footer>

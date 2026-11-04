@@ -1,0 +1,82 @@
+<header class="header">
+  <div class="header-inner">
+    
+    <div class="logo">
+      <a routerLink="/home" class="logo-header">
+        <img src="assets/ma-icone-removebg-preview (1).png" alt="Logo do Meu Ateliê" class="logo-image">
+        <h1 class="logo-text">Meu Ateliê</h1>
+      </a>
+    </div>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a routerLink="/home" routerLinkActive="nav-link--active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+            <i class="bi bi-house-fill"></i>
+            Inicio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/pedidos" routerLinkActive="nav-link--active" class="nav-link">
+            <i class="bi bi-file-earmark-text-fill"></i>
+            Pedidos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/materiais" routerLinkActive="nav-link--active" class="nav-link">
+            <i class="bi bi-scissors"></i>
+            Materiais
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/produtos" routerLinkActive="nav-link--active" class="nav-link">
+            <i class="bi bi-bag-dash-fill"></i>
+            Produtos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/clientes" routerLinkActive="nav-link--active" class="nav-link">
+            <i class="bi bi-people-fill"></i>
+            Clientes
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/relatorios" routerLinkActive="nav-link--active" class="nav-link">
+            <i class="bi bi-file-earmark-bar-graph-fill"></i>
+            Relatórios
+          </a>
+        </li>
+                <li class="nav-item">
+          <a routerLink="/meu-perfil" routerLinkActive="nav-link--active" class="nav-link">
+            <i class="bi bi-person-circle"></i>
+            Meu perfil
+          </a>
+        </li>
+        <li class="nav-item">
+          <a (click)="sair()" class="nav-link" style="cursor: pointer;" title="Sair">
+            <i class="bi bi-box-arrow-right"></i>
+            Sair
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <a (click)="toggleMenu()" class="hamburger" aria-label="Abrir menu" style="cursor: pointer;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </a>
+
+    <div id="mobile-menu" class="mobile-menu" [class.aberto]="isMenuOpen">
+      <nav class="mobile-nav">
+        <a routerLink="/home" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link">Inicio</a>
+        <a routerLink="/pedidos" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" class="mobile-nav-link">Pedidos</a>
+        <a routerLink="/materiais" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" class="mobile-nav-link">Materiais</a>
+        <a routerLink="/clientes" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" class="mobile-nav-link">Clientes</a>
+        <a routerLink="/produtos" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" class="mobile-nav-link">Produtos</a>
+        <a routerLink="/relatorios" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" class="mobile-nav-link">Relatorios</a>
+        <a routerLink="/meu-perfil" (click)="toggleMenu()" routerLinkActive="mobile-nav-link--active" class="mobile-nav-link">Meu perfil</a>
+        <a (click)="sair(); toggleMenu()" class="mobile-nav-link" style="cursor: pointer;">Sair</a>
+      </nav>
+    </div>
+
+  </div>
+</header>
